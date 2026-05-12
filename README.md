@@ -17,7 +17,7 @@ The final output is `final_hantavirus_dataset.csv`, which includes:
 * `lokasi_geografis_koordinat`: Lat/Lon points for map visualization.
 
 ## Preparation & Installation
-Use Python 3.12+ (using a MacBook Air M4 is recommended for local processing speed).
+Use Python 3.12+
 
 ```bash
 python3 -m venv venv
