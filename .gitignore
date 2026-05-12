@@ -2,5 +2,4 @@ echo "venv/" >> .gitignore
 echo "__pycache__/" >> .gitignore
 echo ".DS_Store" >> .gitignore
 echo ".ipynb_checkpoints/" >> .gitignore
-echo "data/raw/" >> .gitignore
-echo "data/interim/" >> .gitignore
+
