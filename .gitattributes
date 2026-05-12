@@ -1,0 +1,4 @@
+data/raw/raw_hantavirus_ncbi.csv filter=lfs diff=lfs merge=lfs -text
+data/interim/interim_hantavirus.csv filter=lfs diff=lfs merge=lfs -text
+data/processed/final_hantavirus_dataset.csv filter=lfs diff=lfs merge=lfs -text
+notebooks/*.png filter=lfs diff=lfs merge=lfs -text
