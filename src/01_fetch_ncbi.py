@@ -6,6 +6,7 @@ from Bio import Entrez, SeqIO
 Entrez.email = "rafidhiyaulh@gmail.com"
 
 def fetch_hantavirus_data():
+    print("Attempting connection to NCBI server...")
     search_term = '"Orthohantavirus"[Organism] AND ("segment S" OR "segment M" OR "segment L")'
     
     try:
@@ -14,7 +15,9 @@ def fetch_hantavirus_data():
         handle.close()
         id_list = record["IdList"]
         total_ids = len(id_list)
-    except Exception:
+        print(f"Success! Found {total_ids} records. Starting extraction...")
+    except Exception as e:
+        print(f"Connection failed or ESEARCH error. Details: {e}")
         return
 
     batch_size = 50
@@ -39,8 +42,17 @@ def fetch_hantavirus_data():
                     if feature.type == "source":
                         organism = feature.qualifiers.get('organism', [organism])[0]
                         host = feature.qualifiers.get('host', [host])[0]
-                        country = feature.qualifiers.get('country', [country])[0]
                         segment = feature.qualifiers.get('segment', [segment])[0]
+                        
+                        country_raw = feature.qualifiers.get('country', [""])[0]
+                        if country_raw:
+                            country = country_raw
+                        else:
+                            strain = feature.qualifiers.get('strain', [""])[0]
+                            isolate = feature.qualifiers.get('isolate', [""])[0]
+                            iso_source = feature.qualifiers.get('isolation_source', [""])[0]
+                            fallbacks = [f for f in [strain, isolate, iso_source] if f]
+                            country = " | ".join(fallbacks) if fallbacks else "Unknown"
                         break
                         
                 data_list.append({
@@ -55,11 +67,13 @@ def fetch_hantavirus_data():
                 
             time.sleep(1)
             
-        except Exception:
+        except Exception as e:
+            print(f"Error processing batch {start}-{end}: {e}")
             continue
 
     os.makedirs("data/raw", exist_ok=True)
     pd.DataFrame(data_list).to_csv("data/raw/raw_hantavirus_ncbi.csv", index=False)
+    print("Completed! Data successfully saved to data/raw/raw_hantavirus_ncbi.csv")
 
 if __name__ == "__main__":
     fetch_hantavirus_data()
